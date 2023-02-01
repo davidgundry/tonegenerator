@@ -1,0 +1,11 @@
+<resources>
+    <declare-styleable name="OscillatorCircle">
+        <attr name="lineWidth" format="float" />
+        <attr name="maxLineWidth" format="float" />
+        <attr name="radius" format="float" />
+        <attr name="labelPosition" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="right" value="1"/>
+        </attr>
+    </declare-styleable>
+</resources>

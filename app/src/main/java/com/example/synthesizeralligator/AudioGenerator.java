@@ -5,6 +5,8 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.util.Log;
 
+import java.io.Serializable;
+
 enum AudioGeneratorState
 {
     Created,
@@ -16,21 +18,20 @@ enum AudioGeneratorState
  * Handles requesting new samples from a Synthesizer and playing them.
  * @param <CommandType> The type of command that the Synthesizer expects
  */
-public class AudioGenerator<CommandType> {
+public class AudioGenerator<CommandType extends Serializable> {
 
     public final int sampleRate;
     public final boolean stereo;
-
-    private AudioTrack audioTrack;
-    private final Synthesizer<CommandType> synth;
-
-    private int samplesGenerated = 0;
     private final int samplesPerMilli;
     private final int numSamples;
     private final int bufferSize;
+
     private final byte pcmData[];
     private final float sampleData[];
+    private final Synthesizer<CommandType> synth;
 
+    private AudioTrack audioTrack;
+    private int samplesGenerated = 0;
     private AudioGeneratorState state;
 
     public AudioGenerator(Synthesizer synth, int sampleRate, boolean stereo, int bufferSizeInMillis) {
@@ -52,8 +53,6 @@ public class AudioGenerator<CommandType> {
         state = AudioGeneratorState.Created;
     }
 
-    public int getSamplesGenerated() { return this.samplesGenerated; }
-
     public void initialise() {
         if (state != AudioGeneratorState.Created)
                 throw new IllegalStateException("Can only initialise a newly created AudioGenerator");
@@ -72,9 +71,9 @@ public class AudioGenerator<CommandType> {
         if (state != AudioGeneratorState.Initialised)
             throw new IllegalStateException("Can only call generate on an initialised but not ended AudioGenerator ");
         long elapsedSamples = millisSinceStart * samplesPerMilli;
-        int buffer = (int) (getSamplesGenerated() - elapsedSamples);
+        int buffer = (int) (samplesGenerated - elapsedSamples);
         if (buffer < 0)
-            Log.d("SynthThread", "underrun of " + -buffer);
+            bufferUnderrun(-buffer);
         if (buffer < bufferSize)
             makeNewAudio(bufferSize - buffer);
     }
@@ -89,16 +88,16 @@ public class AudioGenerator<CommandType> {
             audioTrack.pause();
     }
 
-    public void command(CommandType c) {
-        synth.command(c);
-    }
-
     public void end() {
         if (state != AudioGeneratorState.Initialised)
             throw new IllegalStateException("Can only call end on an initialised AudioGenerator");
         audioTrack.stop();
         audioTrack.release();
         state = AudioGeneratorState.Ended;
+    }
+
+    public void command(CommandType c) {
+        synth.command(c);
     }
 
     private void makeNewAudio(int newToGen)
@@ -108,12 +107,10 @@ public class AudioGenerator<CommandType> {
         synth.generate(samplesGenerated, newToGen, sampleData);
         convertToPCM(samplesGenerated, newToGen);
         playSound(samplesGenerated, newToGen, audioTrack);
-        //playSoundFloats(samplesGenerated, newToGen, audioTrack);
         this.samplesGenerated += newToGen;
     }
 
-    private void convertToPCM(long startOffset, int newSamples)
-    {
+    private void convertToPCM(long startOffset, int newSamples) {
         int pcmIndex = (int) ((startOffset*2) % pcmData.length);
         int startIndex = (int) (startOffset % sampleData.length);
 
@@ -125,18 +122,6 @@ public class AudioGenerator<CommandType> {
             pcmIndex++;
             pcmIndex = pcmIndex % pcmData.length;
         }
-    }
-
-    // Testing indicates this is less efficient than converting ourselves and writing bytes to AudioTrack
-    private void playSoundFloats(long startOffset, int samples, AudioTrack audioTrack) {
-        int startInArray = (int) (startOffset % sampleData.length);
-        if (startInArray + samples > sampleData.length) {
-            int samplesThatFit = sampleData.length - startInArray;
-            audioTrack.write(sampleData, startInArray, samplesThatFit, AudioTrack.WRITE_BLOCKING);
-            audioTrack.write(sampleData, 0, Math.min(samples - samplesThatFit, sampleData.length), AudioTrack.WRITE_BLOCKING);
-        }
-        else
-            audioTrack.write(sampleData, startInArray, samples, AudioTrack.WRITE_BLOCKING);
     }
 
     private void playSound(long startOffset, int samples, AudioTrack audioTrack) {
@@ -151,4 +136,20 @@ public class AudioGenerator<CommandType> {
         else
             audioTrack.write(pcmData, startInArray, sizeInBytes);
     }
+
+    private void bufferUnderrun(int samples) {
+        Log.d("SynthThread", "underrun of " + samples);
+    }
+
+
+    // Testing indicates this is less efficient than converting ourselves and writing bytes to AudioTrack
+    /*private void playSoundFloats(long startOffset, int samples, AudioTrack audioTrack) {
+        int startInArray = (int) (startOffset % sampleData.length);
+        if (startInArray + samples > sampleData.length) {
+            int samplesThatFit = sampleData.length - startInArray;
+            audioTrack.write(sampleData, startInArray, samplesThatFit, AudioTrack.WRITE_BLOCKING);
+            audioTrack.write(sampleData, 0, Math.min(samples - samplesThatFit, sampleData.length), AudioTrack.WRITE_BLOCKING);
+        } else
+            audioTrack.write(sampleData, startInArray, samples, AudioTrack.WRITE_BLOCKING);
+    }*/
 }

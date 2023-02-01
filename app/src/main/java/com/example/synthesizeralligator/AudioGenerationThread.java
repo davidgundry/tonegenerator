@@ -1,12 +1,14 @@
 package com.example.synthesizeralligator;
 
+import java.io.Serializable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * A thread that regularly tells an AudioGenerator to generate sound. Handles thread safe communication for the AudioGenerator.
+ * A thread that regularly tells a supplied AudioGenerator to generate sound. Handles thread safe
+ * commands for the AudioGenerator.
  * @param <CommandType> The type of command that the AudioGenerator expects.
  */
-public class AudioGenerationThread<CommandType> extends Thread {
+public class AudioGenerationThread<CommandType extends Serializable> extends Thread {
 
     private AudioGenerator audioGenerator;
     private boolean playing = true;
@@ -22,6 +24,22 @@ public class AudioGenerationThread<CommandType> extends Thread {
     {
         this.audioGenerator = audioGenerator;
         this.sleepTime = sleepTimeInMillis;
+    }
+
+    public void play() {
+        shouldPlay = true;
+    }
+
+    public void pause() {
+        shouldPause = true;
+    }
+
+    public void end() {
+        shouldEnd = true;
+    }
+
+    public void command(CommandType c) {
+        commands.add(c);
     }
 
     public void run() {
@@ -45,22 +63,6 @@ public class AudioGenerationThread<CommandType> extends Thread {
         audioGenerator.end();
     }
 
-    public void end() {
-        shouldEnd = true;
-    }
-
-    public void pause() {
-        shouldPause = true;
-    }
-
-    public void play() {
-        shouldPlay = true;
-    }
-
-    public void command(CommandType c) {
-        commands.add(c);
-    }
-
     private void updateState() {
         if (shouldPause) {
             audioGenerator.pause();
@@ -77,8 +79,7 @@ public class AudioGenerationThread<CommandType> extends Thread {
     private void sendCommands()
     {
         CommandType c = commands.poll();
-        while (c != null)
-        {
+        while (c != null) {
             audioGenerator.command(c);
             c = commands.poll();
         }

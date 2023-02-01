@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+/**
+ * Recieves broadcast from notification buttons and sends them to SynthService
+ */
 public class ActionReceiver extends BroadcastReceiver {
 
     @Override

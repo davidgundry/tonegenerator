@@ -1,21 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="tonegenerator.MainActivity">
 
-    <Button
-        android:id="@+id/button4"
+    <tonegenerator.OscillatorCircle
+        android:id="@+id/oscCircle0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        custom:labelPosition="left"
+        custom:layout_constraintTop_toTopOf="parent"
+        custom:lineWidth="20"
+        custom:maxLineWidth="50"
+        custom:radius="350" />
+
+    <tonegenerator.OscillatorCircle
+        android:id="@+id/oscCircle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        custom:labelPosition="left"
+        custom:layout_constraintTop_toTopOf="parent"
+        custom:lineWidth="20"
+        custom:maxLineWidth="50"
+        custom:radius="275" />
+
+    <tonegenerator.OscillatorCircle
+        android:id="@+id/oscCircle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        custom:labelPosition="left"
+        custom:layout_constraintTop_toTopOf="parent"
+        custom:lineWidth="20"
+        custom:maxLineWidth="50"
+        custom:radius="200" />
+
+    <tonegenerator.OscillatorCircle
+        android:id="@+id/oscCircle3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        custom:labelPosition="left"
+        custom:layout_constraintTop_toTopOf="parent"
+        custom:lineWidth="20"
+        custom:maxLineWidth="50"
+        custom:radius="125" />
+
+    <Button
+        android:id="@+id/newSoundButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
         android:onClick="newSoundButton"
         android:text="New Sound"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.246"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/clearButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:onClick="clearButton"
+        android:text="Clear"
+        app:layout_constraintHorizontal_bias="0.73"
+        custom:layout_constraintBottom_toBottomOf="parent"
+        custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/startStopButton"
@@ -47,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:text="Stereo" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/stereoSelect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -89,5 +157,36 @@
         </TableRow>
 
     </TableLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/delButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        custom:srcCompat="@android:drawable/ic_menu_delete"
+        tools:visibility="invisible" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="addButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        custom:srcCompat="@android:drawable/ic_menu_add" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="tableLayout,startStopButton"
+        tools:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

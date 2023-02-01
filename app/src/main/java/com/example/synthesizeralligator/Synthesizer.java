@@ -1,18 +1,25 @@
 package com.example.synthesizeralligator;
 
+import java.io.Serializable;
+
 /**
  * Responsible for generating sound samples
  * @param <SynthCommand>
  */
-public interface Synthesizer<SynthCommand> {
+public abstract class Synthesizer<SynthCommand extends Serializable> {
 
-    void initialise(int sampleRate, boolean stereo);
+    /**
+     *
+     */
+    public Synthesizer() {}
+
+    public abstract void initialise(int sampleRate, boolean stereo);
 
     /**
      * Sends the synthesizer a command object
      * @param command
      */
-    void command(SynthCommand command);
+    public abstract void command(SynthCommand command);
 
     /**
      * Generate PCM audio sample data
@@ -20,5 +27,5 @@ public interface Synthesizer<SynthCommand> {
      * @param samples the number of samples to generate
      * @param array the array to store output values in
      */
-    void generate(long startOffset, int samples, float[] array);
+    public abstract void generate(long startOffset, int samples, float[] array);
 }
