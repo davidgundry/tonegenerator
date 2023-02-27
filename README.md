@@ -4,6 +4,10 @@ An Android demo app that allows the user to design a synthesized tone by control
 
 Four waveforms can be used: sine, square, saw, and triangle.
 
+
+https://user-images.githubusercontent.com/1508862/221574543-9ed31dde-1a86-4f4e-bb3e-cf07685cb8f5.mp4
+
+
 ## As an Android Service Demo
 
 As a demo of how Android services can be used, look at the `SynthConnection` and `SynthService` classes for an example of how to perform inter-service communication.
